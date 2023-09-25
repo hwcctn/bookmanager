@@ -1,25 +1,67 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import  register  from '../components/register.vue'
+import login from '../components/login.vue'
+import head from '../components/head.vue'
+import manager from '../views/manager.vue'
+import user from '../views/user.vue'
+import bookUser from '../views/bookUser.vue'
 
 const routes = [
   {
-    path: '/',
-    name: 'home',
-    component: HomeView
+    path:"/",
+    name:"head",
+    component:head,
+    children:[
+      {
+        path: '/manager',
+        name: 'manager',
+        component: manager
+      },
+      {
+        path: '/user',
+        name: 'user',
+        component: user
+      },
+      {
+        path:'/bookUser',
+        name:'bookUser',
+        component: bookUser
+      },
+      {
+        path:'/historicRecords',
+        name:'historicRecords',
+        component:()=>import("../views/historicRecords.vue")
+      }
+
+    ]
   },
-  {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
-  }
+
+{
+    path:"/register",
+    name:"register",
+    component:register
+},
+{
+    path:"/login",
+    name:"login",
+    component:login
+}
 ]
 
 const router = createRouter({
   history: createWebHashHistory(),
   routes
 })
+router.beforeEach((to,from,next)=>{
+    console.log(to)
+    console.log(from)
+    let token=localStorage.getItem("token")
+    if(token||to.path==="/login"){
+        next()
+    }
+    else{
+    next("/login")
+    }
 
+}) 
 export default router
