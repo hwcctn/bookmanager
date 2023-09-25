@@ -12,6 +12,7 @@
         </el-form-item>
         <el-form-item label="密码">
           <el-input v-model="passw" />
+          
         </el-form-item>
        
   
