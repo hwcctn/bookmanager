@@ -62,6 +62,9 @@ const api={
     questBook(params){
         return axios.post(path.baseUrl+path.questBook,{ params: params })
     },
+    getusers(){
+        return axios.get(path.baseUrl+path.user);
+    }
 }
 
    

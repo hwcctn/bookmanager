@@ -1,5 +1,6 @@
 
   <template>
+  <div id="all">
   <div class="common-layout">
     <el-container>
 
@@ -43,22 +44,16 @@
       </el-menu-item>
           
           </router-link></div>
-          <div><router-link exact to="/user">
           
-          <el-menu-item index="2">
-        <i class="el-icon-menu"></i>
-          <span>用户界面</span>
-        </el-menu-item>
-          </router-link></div>
           <div><router-link exact to="/bookUser">
-            <el-menu-item index="3">
+            <el-menu-item index="2">
         <i class="el-icon-menu"></i>
           <span>图书界面</span>
         </el-menu-item>
            
           </router-link></div>
           <div><router-link exact to="/historicRecords">
-            <el-menu-item index="4">
+            <el-menu-item index="3">
         <i class="el-icon-menu"></i>
           <span>历史记录</span>
         </el-menu-item>
@@ -73,6 +68,8 @@
       </el-container>
     </el-container>
   </div>
+</div>
+
 </template>
 
 
@@ -91,6 +88,7 @@ export default {
 </script>
 
 <style lang='less' scoped>
+
 h2{
   font-size: 35px;
 }
@@ -100,11 +98,13 @@ h2{
 }
 .Aside{
    background-color:#545c64 ;
-  height: 100vh;
+   min-height:calc(100vh - 100px);
  
 }
 .Main{
  background-color:#f4f4f5; 
+ height: calc(100vh - 100px);
+ padding: 0;
 }
 .Aside .rmanager{
   font-size: 25px;

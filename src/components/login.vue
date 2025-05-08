@@ -4,11 +4,13 @@
     class="login-container"
   >
   <h1 class="title">用户登录：</h1>
-    <el-form-item label="id">
-      <el-input v-model="id" />
+    <el-form-item label="user">
+      <el-input v-model="username" />
+      <div style="color: red " v-if="tishiview">用户名不存在</div>
     </el-form-item>
     <el-form-item label="密码">
       <el-input v-model="passw" />
+      <div style="color: red " v-if="passshiview">密码错误</div>
     </el-form-item>
     <el-form-item>
     <el-button type="primary" @click="doLogin" style="width: 100%;">登录</el-button>
@@ -25,40 +27,69 @@
 
 <script>
 import router from '@/router';
-
+import { toRaw } from 'vue';
 export default {
     data() {
         return {
-            id: "",
-            passw: ""
+            username: "",
+            passw: "",
+            users:[],
+            tishiview:false,
+            passshiview:false
         };
     },
+    mounted() {
+        this.$api.getusers({
+
+        }).then(res=>{
+          console.log(res);
+          this.users=res.data;
+          
+         console.log(toRaw(this.users)); 
+        })
+      },
     methods: {
         doLogin() {
-            
-            if(this.id !== "" && this.passw !== ""){
-              console.log(this.user)
+          
+          if(this.username!== "" && this.passw !== ""){
+            let checkuser=toRaw(this.users).find((item)=>{ return item.username===this.username});
+            console.log(checkuser)
+          if(checkuser)
+          {
+            this.tishiview=false
+          if(checkuser.password===this.passw){
+              console.log("Yes")
+              localStorage.setItem("user_id",checkuser.id);
               this.$api.getLogin({
                 
-                  id: this.id,
+                  username: this.id,
                   password: this.passw,
                   
                  
               }).then(res => {
                   console.log(res)
-                  localStorage.setItem("token",res);
+                  localStorage.setItem("token",res.data);
                 
                 })
               
-              localStorage.setItem("user_id",this.id);
-              //this.$router.push("/")
+              
+            this.$router.push("/") 
               
             }
             else{
-              alert("用户名密码错误")
+              console.log("No")
+              this.passshiview=true
             }
-            
+          }
+          else{
+            this.tishiview=true
+          }
+        }
+        else{
+          alert("请输入用户名和密码")
+        }
         },
+
         toRegister(){
             this.$router.push('/Register');
         }

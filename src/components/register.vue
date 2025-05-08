@@ -5,13 +5,17 @@
       >
       <h1 class="title">用户注册：</h1>
       <el-form-item label="id名称">
+        
           <el-input v-model="username" />
+          <div style="color: red " v-if="tishiview">用户名重复</div>
         </el-form-item>
+        
       <el-form-item label="邮箱">
           <el-input v-model="mailbox" />
         </el-form-item>
         <el-form-item label="密码">
           <el-input v-model="passw" />
+
           
         </el-form-item>
        
@@ -26,34 +30,64 @@
     
     <script>
     import router from '@/router';
-    
-    export default {
-      name:"register",
-        data() {
-            return {
-                mailbox:"",
-               
-                passw: "",
-               
-                username:""
+import { toRaw } from 'vue';
 
-            };
+    export default {
+      name: "register",
+      data() {
+        return {
+          mailbox: "",
+
+          passw: "",
+
+          username: "",
+          users:"",
+          tishiview:false
+        };
+      },
+      mounted() {
+        this.$api.getusers({
+
+        }).then(res => {
+          ;
+          this.users = res.data;
+          console.log(res.data)
+})
+      }, methods: {
+        getusers(){
+          this.$api.getusers({
+
+          }).then(res => {
+            ;
+            this.users = res.data;
+            console.log(res.data)
+          })
         },
-        methods: {
-            doRegister(){
-              if(this.mailbox!==""&&this.passw!==""&&this.username!=""){
-                this.$api. getRegister({
-                  username:this.username,
-                  mail:this. mailbox,
-                  password:this.passw
-                }).then(res=>{
-                  console.log(res)
-                })
-                this.$router.push("/login")
-              }
-            }
+        doRegister() {
+          let checkuser=toRaw(this.users).find((item)=>{return item.username===this.username});
+          console.log(checkuser )
+          if (this.mailbox !== "" && this.passw !== "" && this.username != ""&&!checkuser) {
+            
+            this.$api.getRegister({
+              username: this.username,
+              mail: this.mailbox,
+              password: this.passw
+            }).then(res => {
+              console.log(res)
+            })
+           
+         
+          
+        
+             this.$router.push("/login")
+          }
+          else{
+            this.tishiview=true
+          }
         },
-        components: { router }
+
+      },
+      components: { router }
     }
     
     </script>

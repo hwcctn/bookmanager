@@ -34,7 +34,7 @@
 					<el-button type="primary" v-if="scope.row.state === '未借阅'"
 						@click="broBook(scope.row.bookname, scope.row.id)">借阅</el-button>
 					<el-button type="success" color="#626aef" v-else
-						@click=" returnBook(scope.row.bookname)">还书</el-button>
+						@click=" returnBook(scope.row.id)">还书</el-button>
 					<el-button type="primary" color="darkseagreen" @click="questBook" icon="Edit">提出反馈</el-button>
 				</template>
 
@@ -77,7 +77,7 @@
 
 <script>
 
-
+import { toRaw } from 'vue';
 export default {
 	name: "bookUser",
 	data() {
@@ -98,6 +98,7 @@ export default {
 			suretimeBro: false,
 			user_id: localStorage.getItem("user_id"),
 			nowbookid:0,
+			allhistory:[],
 		}
 	},
 	mounted() {
@@ -117,15 +118,22 @@ export default {
 				})
 		},
 		getNowTime() {
-			let dt = new Date()
+		  let dt = new Date() 
+		 
 			let y = dt.getFullYear()
 			let mt = (dt.getMonth() + 1).toString().padStart(2, '0')
 			let day = dt.getDate().toString().padStart(2, '0')
 
 			this.dateString = y + "-" + mt + "-" + day
-			console.log('此刻时间', this.dateString)
+		 	console.log('此刻时间', this.dateString) 
 		},
+		handletime(dt){
+			let y = dt.getFullYear()
+			let mt = (dt.getMonth() + 1).toString().padStart(2, '0')
+			let day = dt.getDate().toString().padStart(2, '0')
 
+		return   y + "-" + mt + "-" + day
+		},
 		searchUser() {
 			if (this.searchFunction === "1") {
 				this.$api.getbookSearch({
@@ -150,7 +158,7 @@ export default {
 			this.nowbookid=id
 			console.log(bookname)
 			this.$api.putbroBook({
-				bookname: bookname
+				id:id
 			}).then(res => {
 				console.log(res)
 				this.broBookcheck = res.data
@@ -167,12 +175,12 @@ export default {
 		 closesuretimeviewBro() {
 			
 			let user_id = localStorage.getItem("user_id")
-				
+			
 				this.$api.buildBook({
-					user_id: user_id,
-					book_id: this.nowbookid,
-					borrowDate: this.borrow_date,
-					expirationDate: this.expiration_date,
+					userId: parseInt (user_id),
+					bookId: this.nowbookid,
+					borrowDate: this.handletime(this.borrow_date),
+					expirationDate: this.handletime(this.expiration_date)
 					
 				})
 			this.suretimeBro = false
@@ -184,30 +192,43 @@ export default {
 		},
 		closerequest() {
 			this.$api.questBook({
-				username: this.user_id,
+				username:this.user_id,
 				idea: this.RequestId
 			}).then(res => {
 				console.log(res)
 			})
 			this.requsetview = false
 		},
-		returnBook(bookname) {
+		returnBook(id) {
 			this.getNowTime()
 			this.$api.returnBook({
-				bookname: bookname
+				id:id
 			}).then(res => {
 				console.log(res)
 			})
-			this.suretime = true
-			let log = parseInt(localStorage.getItem("log"))
+			this.suretime = true,
+
+			this.$api.build3Book({
+			
+		}).then(res=>{
+			this.allhistory=res.data;
+			console.log(toRaw(this.allhistory))
+		}).catch(error => {
+  console.error('API request failed:', error);
+		})
+		console.log( toRaw(this.allhistory));
+		let logindex=this.allhistory.lastIndexOf(item=>item.bookId=id);
+		console.log(logindex);
+		
+		/* let log=this.allhistory[logindex].log; */
+
 			this.$api.build2({
-				log: log,
-				return_date: this.dateString
+				/* log:log, */
+				returnDate: this.dateString
 			}).then(res => {
 				console.log(res)
 			})
-			log += 1;
-			localStorage.setItem("log", log)
+			
 
 		},
 		closesuretime() {

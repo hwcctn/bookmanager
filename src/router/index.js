@@ -3,7 +3,7 @@ import  register  from '../components/register.vue'
 import login from '../components/login.vue'
 import head from '../components/head.vue'
 import manager from '../views/manager.vue'
-import user from '../views/user.vue'
+
 import bookUser from '../views/bookUser.vue'
 
 const routes = [
@@ -17,11 +17,7 @@ const routes = [
         name: 'manager',
         component: manager
       },
-      {
-        path: '/user',
-        name: 'user',
-        component: user
-      },
+     
       {
         path:'/bookUser',
         name:'bookUser',

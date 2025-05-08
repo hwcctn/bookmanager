@@ -10,7 +10,7 @@
 			</el-table-column>
 			<el-table-column prop="returnDate" label="还书时间" >
 			</el-table-column>
-			<el-table-column label="操作" >
+			<el-table-column label="状态" >
 				
 				<template #default="scope" >
 					<div v-if="scope.row.state === '未还书'">未还书</div>
